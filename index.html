@@ -3,6 +3,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Schibsted+Grotesk:wght@600;700&display=swap">
 <style>html{color-scheme:light}body{margin:0}</style></head><body>
+<title>Checklist Inspeksi CPPOB</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Schibsted+Grotesk:wght@600;700&display=swap">
 <style>
 /* Layout: aplikasi satu kolom untuk HP; header kecil di atas, navigasi tab di bawah, kartu butir per bagian */
 :root{
@@ -124,11 +128,40 @@ table.t td.n{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
 .note{border:1px dashed var(--line);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--muted);margin:10px 0}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(76px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;z-index:40;font-size:14px;max-width:90vw}
 .sync{font-size:12px;color:var(--muted)}
+.capa{min-width:1000px;table-layout:fixed}
+.capa th{background:var(--surface2);font-size:13px}
+.capa td{padding:6px}
+.capa td textarea{min-height:92px;font-size:14px}
+.capa td.cn{text-align:center}
+.capa th:nth-child(1){width:64px}.capa th:nth-child(2){width:250px}.capa th:nth-child(3){width:120px}.capa th:nth-child(4),.capa th:nth-child(5){width:200px}.capa th:nth-child(6){width:130px}.capa th:nth-child(7){width:170px}
+.capa tr.off{opacity:.45}
+.chk{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;min-height:44px}
+.chk input{width:22px;height:22px}
+canvas.pad{touch-action:none;width:100%;height:180px;background:#fff;border:1.5px dashed var(--accent);border-radius:10px;display:block;cursor:crosshair}
+.sigimg{background:#fff;border:1px solid var(--line);border-radius:10px;max-width:100%;height:110px;object-fit:contain;display:block;margin:6px 0}
+.locked input,.locked textarea,.locked select,.locked [data-act=status]{pointer-events:none;opacity:.6}
+#printArea{display:none}
+@media print{
+ html,body{background:#fff!important;color:#000!important}
+ body::before{display:none}
+ #app,#toast{display:none!important}
+ #printArea{display:block!important;font:11px Arial,sans-serif;color:#000}
+ @page{size:A4 landscape;margin:12mm}
+ .pp-id td{padding:2px 4px;font-size:11px}
+ .pp-t{width:100%;border-collapse:collapse;table-layout:fixed;margin-top:8px}
+ .pp-t th,.pp-t td{border:1px solid #000;padding:4px;vertical-align:top;font-size:10.5px;overflow-wrap:anywhere;text-align:left}
+ .pp-signs{display:flex;gap:30px;margin-top:18px;break-inside:avoid}
+ .pp-sig{text-align:center;min-width:150px}.pp-sig img{height:60px;display:block;margin:4px auto}
+ .pp-blank{height:60px}.pp-lbl{font-weight:700;margin-bottom:2px}
+ .pp-tim{flex:1}.pp-timrow{display:flex;gap:18px;flex-wrap:wrap}
+ thead{display:table-header-group}tr{break-inside:avoid}
+}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
 <div id="app"></div>
 <div id="toast" class="toast" hidden></div>
+<div id="printArea"></div>
 
 <script>
 const SECTIONS = [{"title": "a. Komitmen Penanggung Jawab/Pemilik Sarana Produksi", "items": [{"no": 1, "text": "Pembentukan dan pemeliharaan budaya keamanan pangan di sarana produksi pangan olahan", "cats": ["MN", "MJ"], "desc": {"MN": "apabila belum secara konsisten membentuk dan memelihara budaya keamanan pangan", "MJ": "apabila penganggung jawab/pemilik tidak memiliki komitmen"}}]}, {"title": "b. Lingkungan Sarana Produksi (area luar atau eksternal)", "items": [{"no": 2, "text": "Lingkungan sarana produksi bersih dan terpelihara (tidak terdapat akumulasi debu, bebas ilalang, bebas sampah, bebas dari barang-barang tidak terpakai) (*)", "cats": ["MN"], "desc": {}}, {"no": 3, "text": "Tidak terdapat kontaminasi silang dari lingkungan (misal: Tempat sampah terbuka, terdapat tempat pemeliharaan hewan, genangan air)", "cats": ["MN"], "desc": {}}]}, {"title": "c. Konstruksi dan Layout Bangunan (dinding, lantai, langit-langit, pintu, jendela, dan perpipaan)", "items": [{"no": 4, "text": "Dinding bersih, tidak berjamur, tidak berlumut dan/atau tidak retak (*)", "cats": ["MN"], "desc": {}}, {"no": 5, "text": "Lantai bersih, tidak retak, dan/atau tidak ada genangan", "cats": ["MN"], "desc": {}}, {"no": 6, "text": "Langit-langit dan/atau atap bersih, tidak retak dan/atau catnya tidak mengelupas (*)", "cats": ["MN"], "desc": {}}, {"no": 7, "text": "Pintu ruangan produksi sebaiknya membuka ke arah luar dan dapat menutup secara sempurna atau menggunakan tirai ketika pintu terbuka (*)", "cats": ["MN"], "desc": {}}, {"no": 8, "text": "Jendela terbuka yang berhubungan dengan lingkungan luar dilengkapi dengan kasa pencegah serangga atau hama dan jendela mudah dibersihkan (*)", "cats": ["MN"], "desc": {}}, {"no": 9, "text": "Desain perpipaan mencegah kontaminasi silang", "cats": ["MJ"], "desc": {}}, {"no": 10, "text": "Terdapat program pemeliharaan bangunan yang dilakukan secara konsisten", "cats": ["MN"], "desc": {}}]}, {"title": "d. Area Pengolahan", "items": [{"no": 11, "text": "Tata letak area pengolahan mencegah kemungkinan kontaminasi silang", "cats": ["MJ"], "desc": {}}, {"no": 12, "text": "Kondisi bersih dan terawat", "cats": ["MJ"], "desc": {}}, {"no": 13, "text": "Luas area pengolahan memberikan ruang gerak karyawan yang cukup (*)", "cats": ["MN"], "desc": {}}, {"no": 14, "text": "Desain area antara/penyimpanan sementara untuk transfer bahan baku/bahan kemas serta produk akhir mencegah masuknya benda asing atau hama", "cats": ["MN"], "desc": {}}]}, {"title": "e. Air, Es, Gas dan Energi (Listrik, Bahan Bakar)", "items": [{"no": 15, "text": "Sumber air (termasuk es dan uap) memenuhi persyaratan - tidak ada risiko tercemar - pengujian air secara berkala, minimal 1 tahun sekali", "cats": ["MN", "MJ"], "desc": {"MN": "bila dilakukan pengujian namun tidak rutin", "MJ": "bila pengujian air yang digunakan sebagai bagian dari produk atau kontak dengan produk tidak memenuhi syarat dan/atau jika sumber air tercemar"}}, {"no": 16, "text": "Penggunaan udara bertekanan dan gas (CO2/N2/gas lainnya) sesuai persyaratan dan terpelihara dengan baik", "cats": ["MJ"], "desc": {}}, {"no": 17, "text": "Terdapat cadangan sumber energi atau pasokan listrik tersedia pada saat dibutuhkan bagi industri yang memerlukan pasokan energi secara berkesinambungan, misal terkait cold chain atau proses khusus lainnya (jika diperlukan)", "cats": ["MN"], "desc": {}}]}, {"title": "f. Ventilasi dan Kualitas Udara", "items": [{"no": 18, "text": "Tersedia ventilasi (pengendalian udara) di area pengolahan dan penyimpanan untuk mencegah kondensasi, debu, dan bau berlebihan", "cats": ["MN", "MJ"], "desc": {"MN": "apabila ditemukan di area lain", "MJ": "apabila ditemukan di area pengolahan dan penyimpanan"}}, {"no": 19, "text": "Ventilasi yang terbuka dilengkapi dengan kasa", "cats": ["MJ"], "desc": {}}, {"no": 20, "text": "Sirkulasi udara di area risiko tinggi terkendali", "cats": ["MJ"], "desc": {}}]}, {"title": "g. Penerangan", "items": [{"no": 21, "text": "Penerangan tersedia di seluruh area kerja, sesuai dan cukup untuk melakukan pekerjaan dan pembersihan", "cats": ["MN"], "desc": {}}]}, {"title": "h. Penanganan Limbah dan Drainase", "items": [{"no": 22, "text": "Limbah/sampah ditangani dengan baik", "cats": ["MN", "MJ"], "desc": {"MN": "untuk limbah yang tidak berpotensi secara langsung", "MJ": "untuk limbah yang berpotensi mengontaminasi secara langsung terhadap produk di area pengolahan"}}, {"no": 23, "text": "Drainase dan sarana pengolahan limbah dirancang dan dipelihara dengan baik (*)", "cats": ["MN"], "desc": {}}]}, {"title": "i. Peralatan", "items": [{"no": 24, "text": "Rancang bangun, konstruksi, dan penempatan peralatan tidak menghambat efektivitas sanitasi", "cats": ["MN"], "desc": {}}, {"no": 25, "text": "Peralatan dalam kondisi bersih", "cats": ["MJ"], "desc": {}}, {"no": 26, "text": "Terdapat program pemeliharaan peralatan yang dilakukan secara konsisten", "cats": ["MN"], "desc": {}}, {"no": 27, "text": "Terdapat program kalibrasi, verifikasi alat ukur dan instrumen (*)", "cats": ["MN", "MJ"], "desc": {"MN": "untuk alat ukur yang bersifat umum", "MJ": "bila digunakan untuk penimbangan BTP dan/atau instrumen yang digunakan untuk pemantauan tahapan kritis"}}]}, {"title": "j. Program Sanitasi (Pembersihan dan Disinfeksi)", "items": [{"no": 28, "text": "Terdapat program/prosedur sanitasi yang terlaksana secara konsisten", "cats": ["MJ"], "desc": {}}, {"no": 29, "text": "Sarana pembersihan/pencucian peralatan dalam keadaan bersih sebelum dan setelah digunakan", "cats": ["MN"], "desc": {}}, {"no": 30, "text": "Proses pembersihan/pencucian tidak mencemari atau mengkontaminasi produk yang sedang ditangani atau diolah.", "cats": ["MJ"], "desc": {}}, {"no": 31, "text": "Memastikan bahwa peralatan yang sudah disanitasi dalam kondisi bersih dan berjalan secara efektif (*)", "cats": ["MJ"], "desc": {}}]}, {"title": "k. Pengelolaan Barang dan Jasa yang Dibeli", "items": [{"no": 32, "text": "Pengendalian pembelian bahan, jasa dan aktivitas subkontraktor yang memiliki dampak terhadap keamanan pangan (*)", "cats": ["MJ"], "desc": {}}]}, {"title": "l. Bahan Baku, Bahan Tambahan Pangan, Bahan Penolong, Kemasan dan Produk Akhir", "items": [{"no": 33, "text": "Spesifikasi bahan baku, bahan tambahan pangan, bahan penolong, kemasan dan produk akhir sesuai dengan peraturan dan persyaratan", "cats": ["MJ", "KT"], "desc": {"MJ": "apabila menggunakan bahan baku yang wajib SNI tidak sesuai dengan standar", "KT": "apablila menggunakan bahan yang tidak sesuai dengan peraturan"}}, {"no": 34, "text": "Terdapat program dan catatan pengawasan keamanan dan mutu bahan baku, bahan tambahan pangan, bahan penolong dan kemasan", "cats": ["MN", "MJ"], "desc": {"MN": "apabila terdapat inkonsistensi implementasi program dan catatan pengawasan keamanan dan mutu", "MJ": "apabila tidak ada program pengawasan keamanan dan mutu"}}, {"no": 35, "text": "Terdapat program dan catatan pengawasan keamanan dan mutu produk akhir", "cats": ["MN", "MJ"], "desc": {"MN": "apabila terdapat inkonsistensi implementasi program dan catatan pengawasan keamanan dan mutu", "MJ": "apabila tidak ada program pengawasan keamanan dan mutu"}}, {"no": 36, "text": "Bahan baku, bahan tambahan pangan, bahan penolong, kemasan dan produk akhir yang digunakan sesuai dengan peraturan dan persyaratan ditangani dengan baik", "cats": ["MN", "MJ"], "desc": {"MN": "apabila inkonsisten", "MJ": "apabila bahan tidak sesuai dengan peraturan dan persyaratan dan tidak ditangani dengan baik"}}]}, {"title": "m. Pengendalian Proses dan pencegahan kontaminasi silang", "items": [{"no": 37, "text": "Produk pangan yang diproduksi sesuai dengan deskripsi produk yang ditetapkan", "cats": ["MJ"], "desc": {}}, {"no": 38, "text": "Terdapat dokumen deskripsi proses produksi yang dapat mengidentifikasikan sumber kontaminasi dan tahapan penting untuk dilakukan pemantauan.", "cats": ["MJ"], "desc": {}}, {"no": 39, "text": "Terdapat prosedur pengendalian proses (in-process control) yang dilaksanakan secara konsisten", "cats": ["MJ", "KT"], "desc": {"MJ": "jika berkaitan dengan pemantauan bukan pada tahapan kritis", "KT": "jika berkaitan dengan pemantauan pada tahapan kritis"}}, {"no": 40, "text": "Terdapat personel kompeten yang bertanggung jawab untuk memantau tahap-tahap kritis", "cats": ["MJ"], "desc": {}}, {"no": 41, "text": "Terdapat catatan monitoring pengendalian proses dan catatan tindakan koreksi terhadap ketidaksesuaian", "cats": ["MN", "MJ"], "desc": {"MN": "jika tidak konsisten dalam melakukan pencatatan tehadap tahap-tahap kritis", "MJ": "jika tidak melakukan pencatatan tehadap tahap-tahap kritis"}}, {"no": 42, "text": "Terdapat prosedur evaluasi pelepasan produk akhir (release product) (*)", "cats": ["MJ", "KT"], "desc": {"MJ": "jika tidak konsisten menerapkan prosedur evaluasi", "KT": "jika tidak dilakukan evaluasi pelepasan produk akhir"}}, {"no": 43, "text": "Terdapat program untuk mencegah, mengendalikan dan mendeteksi kontaminasi silang dan alergen", "cats": ["MJ", "KT"], "desc": {"MJ": "jika inkonsistensi implementasi program dan produk tidak mengandung allergen", "KT": "jika program tidak dilaksanakan dan produk mengandung alergen"}}]}, {"title": "n. Penanganan Produk Tidak Sesuai", "items": [{"no": 44, "text": "Terdapat prosedur penanganan produk yang tidak sesuai, tindakan koreksi yang dilakukan dan pencatatan. Pengendalian proses rework dilakukan sesuai dengan prosedur yang ditetapkan.", "cats": ["MN", "MJ"], "desc": {"MN": "jika terdapat inkonsistensi terhadap pelaksanaan prosedur dan pencatatan produk tidak sesuai", "MJ": "jika pengendalian rework tidak sesuai prosedur"}}]}, {"title": "o. Laboratorium Pengujian Internal", "items": [{"no": 45, "text": "Terdapat laboratorium pengujian untuk industri yang dipersyaratkan/sesuai ketentuan untuk produk AMDK, Formula Bayi, Formula Lanjutan dan Formula Pertumbuhan", "cats": ["KT"], "desc": {}}]}, {"title": "p. Pengendalian Hama", "items": [{"no": 46, "text": "Terdapat program pengendalian hama (binatang peliharaan dan liar, pengerat, serangga, burung, dan lainnya) yang efektif", "cats": ["MN", "MJ", "KT"], "desc": {"MN": "jika inkonsistensi prosedur pengendalian", "MJ": "jika tidak terdapat program pengendalian", "KT": "jika ditemukan indikasi adanya investasi hama"}}, {"no": 47, "text": "Terdapat fasilitas atau usaha lain untuk mencegah binatang atau serangga masuk ke dalam pabrik", "cats": ["MJ"], "desc": {}}]}, {"title": "q. Fasilitas Karyawan dan Kebersihan Personel", "items": [{"no": 48, "text": "Fasilitas pencucian tangan tersedia di dekat area pengolahan dan/atau tempat yang mudah dijangkau dengan jumlah yang memadai serta terdapat peringatan dan petunjuk cara mencuci tangan.", "cats": ["MN", "MJ"], "desc": {"MN": "jika tidak terdapat peringatan", "MJ": "jika tidak tersedia air mengalir, sabun dan pengering tangan (tisu, lap tangan atau hand dryer)"}}, {"no": 49, "text": "Terdapat fasilitas karyawan yang bersih dan terawat seperti tempat ganti pakaian kerja dan tempat penyimpanan barang pribadi, kantin dan tempat ibadah (jika diperlukan)", "cats": ["MN"], "desc": {}}, {"no": 50, "text": "Tersedia toilet dengan jumlah yang cukup, mudah dijangkau, dan/atau tidak terbuka langsung ke area pengolahan serta sarana mencuci tangan dan perlengkapannya, yakni sabun dan alat pengering (tisu, lap tangan atau hand dryer) (*)", "cats": ["MN", "MJ", "KT"], "desc": {"MN": "jika jumlah toilet tidak memadai", "MJ": "bila tidak ada perlengkapannya", "KT": "bila sarana cuci tangan tidak lengkap dan toilet mengarah langsung ke area pengolahan"}}, {"no": 51, "text": "Personel berpakaian kerja bersih dan lengkap meliputi: sarung tangan (jika diperlukan); tutup rambut termasuk jenggot, kumis dan jambang; masker; dan sepatu khusus (jika diperlukan)", "cats": ["MN", "MJ"], "desc": {"MN": "apabila personel tidak kontak langsung dengan produk", "MJ": "apabila personel kontak langsung dengan produk"}}, {"no": 52, "text": "Perilaku personel tidak menyebabkan kontaminasi silang", "cats": ["MN", "MJ"], "desc": {"MN": "apabila personel tidak kontak langsung dengan produk", "MJ": "apabila personel kontak langsung dengan produk"}}, {"no": 53, "text": "Terdapat program dan catatan pemeriksaan kesehatan personel, termasuk penyakit infeksi berbahaya", "cats": ["MN", "MJ"], "desc": {"MN": "apabila terdapat inkonsistensi implementasi program dan catatan pemeriksaan kesehatan", "MJ": "apabila tidak ada program pemeriksaan kesehatan"}}]}, {"title": "r. Pelatihan Personel", "items": [{"no": 54, "text": "Terdapat program dan catatan pelatihan personel (*)", "cats": ["MN", "MJ"], "desc": {"MN": "apabila terdapat inkonsistensi implementasi program dan catatan", "MJ": "apabila tidak ada program pelatihan"}}]}, {"title": "s. Pengemasan", "items": [{"no": 55, "text": "Proses pengemasan dilakukan dengan baik terhindar dari kontaminasi silang", "cats": ["MJ"], "desc": {}}]}, {"title": "t. Pengendalian Bahan Kimia Non Pangan", "items": [{"no": 56, "text": "Bahan kimia yang peruntukkannya bukan untuk pangan yang berisiko kontak dengan produk bersifat aman untuk pangan dan tidak mencemari produk", "cats": ["MJ", "KT"], "desc": {"MJ": "apabila bahan kimia non pangan berpotensi mencemari pangan", "KT": "apabila bahan kimia non pangan mencemari produk"}}, {"no": 57, "text": "Terdapat pemisahan dan penandaan bahan kimia non pangan (termasuk penyimpanannya)", "cats": ["MN"], "desc": {}}]}, {"title": "u. Sistem Ketertelusuran dan Penarikan", "items": [{"no": 58, "text": "Terdapat pemberian identitas/pengkodean pada bahan baku, bahan antara, bahan kemas dan produk akhir untuk ketertelusuran", "cats": ["MN", "MJ"], "desc": {"MJ": "apabila tidak diberi identitas/ pengkodean", "MN": "apabila terdapat inskonsistensi"}}, {"no": 59, "text": "Terdapat sistem ketertelusuran dan penarikan produk yang efektif termasuk melakukan simulasi ketertelusuran dan penarikan produk (*)", "cats": ["MJ"], "desc": {}}]}, {"title": "v. Penyimpanan Bahan Baku, Bahan Tambahan Pangan, Bahan Penolong, Kemasan dan Produk Akhir", "items": [{"no": 60, "text": "Sarana penyimpanan terjaga kebersihannya", "cats": ["MN"], "desc": {}}, {"no": 61, "text": "Tempat penyimpanan dalam kondisi baik, teratur dan terpelihara", "cats": ["MJ"], "desc": {}}, {"no": 62, "text": "Terdapat penandaan status yang jelas", "cats": ["MN"], "desc": {}}, {"no": 63, "text": "Bahan dirotasi berdasarkan sistem FIFO/FEFO", "cats": ["MN"], "desc": {}}, {"no": 64, "text": "Kondisi lingkungan penyimpanan sesuai persyaratan", "cats": ["MN", "MJ"], "desc": {"MN": "bila inkonisten dalam pemantauan kondisi lingkungan yang dipersyaratkan", "MJ": "bila kondisi lingkungan tidak sesuai dengan persyaratan dan/atau tidak dilakukan pemantauan"}}]}, {"title": "w. Pemuatan Produk ke Kendaraan", "items": [{"no": 65, "text": "Kondisi kendaraan dan/atau tempat pemuatan produk bersih", "cats": ["MN"], "desc": {}}, {"no": 66, "text": "Kondisi kendaraan dan/atau tempat pemuatan memberikan perlindungan terhadap kerusakan produk (*)", "cats": ["MN", "MJ"], "desc": {"MN": "untuk produk lainnya", "MJ": "untuk produk yang memerlukan cold chain"}}]}, {"title": "x. Informasi Produk", "items": [{"no": 67, "text": "Label memenuhi ketentuan", "cats": ["MN", "MJ", "KT"], "desc": {"MN": "untuk pelanggaran kelengkapan label dan klaim umum", "MJ": "untuk pelanggaran klaim, ING", "KT": "untuk pelanggaran label terkait informasi yang menyebabkan kesalahan konsumsi dan/atau kesalahan cara penyimpanan dan/atau tidak mencantumkan masa kedaluwarsa/baik digunakan sebelum dan/atau komposisi tidak sesuai dengan yang disetujui pada saat pendaftaran (jika ada) dan ditemukan produk tanpa izin edar (TIE)"}}]}, {"title": "y. Tanggap Darurat Keamanan Pangan", "items": [{"no": 68, "text": "Terdapat prosedur tanggap darurat keamanan pangan yang memadai", "cats": ["MN"], "desc": {}}]}];
@@ -170,7 +203,7 @@ function newInsp(sample){
   }
   store.list.unshift(o);return o;
 }
-function touch(id){const o=id?store.list.find(x=>x.id===id):cur();if(!o)return;o.updatedAt=Date.now();saveLocal();queueRemote(o.id);updateHeader();}
+function touch(id){const o=id?store.list.find(x=>x.id===id):cur();if(!o)return;o.updatedAt=Date.now();saveLocal();queueRemote(o.id);queueTeam(o.id);updateHeader();}
 function getA(o,no){return o.a[no]||(o.a[no]={});}
 function setPath(o,p,v){const [g,k]=p.split(".");(o[g]||(o[g]={}))[k]=v;}
 function getPath(o,p){const [g,k]=p.split(".");return (o[g]||{})[k]||"";}
@@ -218,6 +251,7 @@ function fieldHTML(o,f){
 function render(){
   const y=window.scrollY, root=$("#app");
   root.innerHTML = ui.view==="home" ? homeHTML() : inspHTML();
+  initPads();
   window.scrollTo(0,y);
 }
 function headerHTML(left,title,sub,right){return `<div class="top"><div class="top-in">${left}<div class="ttl"><h1>${title}</h1><div class="sub">${sub}</div></div>${right||""}</div></div>`;}
@@ -232,18 +266,18 @@ function homeHTML(){
       ${del?`<button class="btn danger" data-act="delyes" data-id="${o.id}">Hapus?</button>`:`<button class="iconbtn" data-act="del" data-id="${o.id}" aria-label="Hapus inspeksi" style="min-height:36px;min-width:36px"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button>`}</div></div>`;}).join("");
   const body=store.list.length?`<div class="row" style="margin-bottom:12px"><button class="btn pri" data-act="new">+ Inspeksi baru</button><button class="btn" data-act="csvAll">Rekap semua (.csv)</button><button class="btn" data-act="copyAll">Salin rekap untuk Sheets</button></div>${rows}`
    :`<div class="empty"><h2>Belum ada inspeksi</h2><p class="muted">Mulai pemeriksaan baru atau lihat dulu cara kerjanya dengan data contoh.</p><div class="row" style="justify-content:center"><button class="btn pri" data-act="new">+ Inspeksi baru</button><button class="btn" data-act="sample">Coba data contoh</button></div></div>`;
-  return headerHTML("", "Checklist Inspeksi CPPOB","Sarana produksi pangan olahan · "+syncText(),"")+`<div class="wrap">${body}<p class="small muted" style="margin-top:18px">Data tersimpan otomatis di perangkat ini${remote?" dan disinkronkan online ke akunmu":""}. Gunakan tombol ekspor untuk memindahkan hasil ke spreadsheet.</p></div>`;
+  return headerHTML("", "Checklist Inspeksi CPPOB","Sarana produksi pangan olahan · "+syncText(),"")+`<div class="wrap">${body}${teamHomeHTML()}<p class="small muted" style="margin-top:18px">Data tersimpan otomatis di perangkat ini${remote?" dan disinkronkan online ke akunmu":""}. Gunakan tombol ekspor untuk memindahkan hasil ke spreadsheet.</p></div>`;
 }
 function inspHTML(){
   const o=cur();if(!o){ui.view="home";return homeHTML();}
   const c=calc(o),nm=o.cover.sarana||o.cover.perusahaan||"Inspeksi tanpa nama";
   const tabs=[["sarana","Sarana",ICON.sarana],["cek","Checklist",ICON.cek],["hasil","Hasil",ICON.hasil],["temuan","Temuan",ICON.temuan],["capa","CAPA",ICON.capa]];
   let body=ui.tab==="sarana"?saranaHTML(o):ui.tab==="cek"?cekHTML(o,c):ui.tab==="hasil"?hasilHTML(o,c):ui.tab==="temuan"?temuanHTML(o):capaHTML(o);
-  return headerHTML(`<button class="iconbtn" data-act="home" aria-label="Kembali ke daftar inspeksi">${ICON.back}</button>`,esc(nm),`${esc(fmtDate(o.cover.tanggal))} · ${c.done}/${c.total} butir terisi`,ratingChip(c))
-   +`<div class="wrap">${body}</div><nav class="nav"><div class="nav-in">${tabs.map(t=>`<button data-act="tab" data-v="${t[0]}" ${ui.tab===t[0]?'aria-current="true"':""}>${t[2]}${t[0]==="temuan"&&c.temuan?`<span class="badge">${c.temuan}</span>`:""}<span>${t[1]}</span></button>`).join("")}</div></nav>`;
+  return headerHTML(`<button class="iconbtn" data-act="home" aria-label="Kembali ke daftar inspeksi">${ICON.back}</button>`,esc(nm),`${esc(fmtDate(o.cover.tanggal))} · ${c.done}/${c.total} butir terisi${o.shared&&teamOn()?" · "+esc(teamStatus(o)):""}`,ratingChip(c))
+   +`<div class="wrap${o.final&&ui.tab!=="capa"&&ui.tab!=="hasil"?" locked":""}">${body}</div><nav class="nav"><div class="nav-in">${tabs.map(t=>`<button data-act="tab" data-v="${t[0]}" ${ui.tab===t[0]?'aria-current="true"':""}>${t[2]}${t[0]==="temuan"&&c.temuan?`<span class="badge">${c.temuan}</span>`:""}<span>${t[1]}</span></button>`).join("")}</div></nav>`;
 }
 function saranaHTML(o){
-  return F_COVER.map(([t,fs],i)=>`<details class="card" ${i<3?"open":""}><summary style="font-family:var(--f-head);font-weight:700;cursor:pointer;min-height:32px;font-size:16px">${t}</summary><div style="margin-top:10px">${fs.map(f=>fieldHTML(o,f)).join("")}</div></details>`).join("")
+  return teamShareHTML(o)+F_COVER.map(([t,fs],i)=>`<details class="card" ${i<3?"open":""}><summary style="font-family:var(--f-head);font-weight:700;cursor:pointer;min-height:32px;font-size:16px">${t}</summary><div style="margin-top:10px">${fs.map(f=>fieldHTML(o,f)).join("")}</div></details>`).join("")
    +`<details class="card"><summary style="font-family:var(--f-head);font-weight:700;cursor:pointer;min-height:32px;font-size:16px">A. Data umum</summary><div style="margin-top:10px">${F_UMUM.map(f=>fieldHTML(o,f)).join("")}</div></details>`
    +`<details class="card"><summary style="font-family:var(--f-head);font-weight:700;cursor:pointer;min-height:32px;font-size:16px">B. Data khusus</summary><div style="margin-top:10px">${F_KHUSUS.map(f=>fieldHTML(o,f)).join("")}</div></details>`
    +`<button class="btn pri" style="width:100%" data-act="tab" data-v="cek">Lanjut ke checklist</button>`;
@@ -259,7 +293,7 @@ function itemHTML(o,it){
     <label class="f" style="margin:0"><span>Objective evidence: bukti / data dukung</span><textarea data-no="${it.no}" data-f="ev" placeholder="mis. tidak ada catatan pembersihan; foto no. 3">${esc(a.ev)}</textarea></label>
     <label class="f" style="margin:0"><span>Reference: acuan</span><textarea data-no="${it.no}" data-f="ref">${esc(a.ref||autoRef(o,it))}</textarea></label></div>`:"";
   return `<div class="it s-${s}" id="it${it.no}"><div class="it-t"><span class="no">${it.no}</span><p>${esc(it.text)}</p></div>
-   <div class="seg" role="group" aria-label="Penilaian butir ${it.no}">${btns.map(([v,l])=>`<button data-act="status" data-no="${it.no}" data-v="${v}" aria-pressed="${s===v}">${l}</button>`).join("")}</div>${hint}${mini}${crit}</div>`;
+   <div class="seg" role="group" aria-label="Penilaian butir ${it.no}">${btns.map(([v,l])=>`<button data-act="status" data-no="${it.no}" data-v="${v}" aria-pressed="${s===v}">${l}</button>`).join("")}</div>${hint}${teamTag(o,it.no)}${mini}${crit}</div>`;
 }
 function cekHTML(o,c){
   const f=ui.filter;
@@ -299,23 +333,90 @@ function temuanHTML(o){
    <label class="f"><span>Bukti / data dukung (Objective evidence)</span><textarea data-no="${it.no}" data-f="ev">${esc(a.ev)}</textarea></label>
    <label class="f" style="margin:0"><span>Acuan (Reference)</span><textarea data-no="${it.no}" data-f="ref">${esc(a.ref||autoRef(o,it))}</textarea></label></div>`;}).join("");
 }
+function fmtDT(ts){if(!ts)return"";const d=new Date(ts),p=n=>String(n).padStart(2,"0");return fmtDate(d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate()))+" "+p(d.getHours())+"."+p(d.getMinutes());}
+function walk(o,path){return path.split(".").reduce((x,k)=>x==null?x:x[k],o);}
+function ensureCapa(o){
+  if(!o.capaExtra)o.capaExtra=[];if(!o.log)o.log=[];
+  if(!o.sig)o.sig={pj:{nama:o.cover.pimpinan||"",jabatan:""}};if(!o.sig.pj)o.sig.pj={nama:"",jabatan:""};
+  if(!o.tim)o.tim=[o.cover.petugas1,o.cover.petugas2,o.cover.petugas3].filter(Boolean).map(n=>({nama:n}));
+}
+function addLog(o,act){(o.log||(o.log=[])).push({ts:Date.now(),act});}
+function capaRows(o){
+  const rows=temuanList(o).map(it=>{const a=o.a[it.no];return{k:"c",ref:"c:"+it.no,no:it.no,on:!a.capaOff,t:a.prob||autoProb(it,a.s),cat:a.s,kl:LABEL[a.s],gap:a.gap||"",capa:a.capa||"",due:a.due||"",ev:a.evalr||""};});
+  (o.capaExtra||[]).forEach(x=>rows.push({k:"x",ref:"x:"+x.id,id:x.id,on:x.on!==false,t:x.t||"",cat:x.cat||"MN",kl:LABEL[x.cat||"MN"],gap:x.gap||"",capa:x.capa||"",due:x.due||"",ev:x.evalr||""}));
+  return rows;
+}
+function sigHTML(o,path,title,s,removable){
+  const fin=!!o.final,lock=(s.img||fin)?"disabled":"";
+  const info=s.img?`<img class="sigimg" src="${s.img}" alt="Tanda tangan ${esc(s.nama)}"><div class="small muted">Ditandatangani ${esc(fmtDT(s.ts))} oleh ${esc(s.nama)}</div>${fin?"":`<div class="row" style="margin-top:8px"><button class="btn" data-act="sigReset" data-p="${path}">Ulangi</button></div>`}`
+   :`<canvas class="pad" data-pad="${path}" aria-label="Area tanda tangan ${esc(title)}"></canvas><div class="row" style="margin-top:8px"><button class="btn" data-act="padClear" data-p="${path}">Hapus</button><button class="btn pri" data-act="padSave" data-p="${path}">Simpan tanda tangan</button>${removable&&!fin?`<button class="btn danger" data-act="timDel" data-p="${path}">Hapus anggota</button>`:""}</div>`;
+  return `<div class="card sig"><div class="row" style="justify-content:space-between;align-items:center"><b>${esc(title)}</b>${s.img?'<span class="pill p-ok">Sudah TTD</span>':'<span class="pill p-n">Belum TTD</span>'}</div>
+  <div class="grid2" style="margin-top:8px"><label class="f"><span>Nama terang</span><input type="text" data-sg="${path}.nama" value="${esc(s.nama)}" ${lock}></label>
+  ${path==="sig.pj"?`<label class="f"><span>Jabatan</span><input type="text" data-sg="sig.pj.jabatan" value="${esc(s.jabatan)}" ${lock}></label>`:""}</div>${info}</div>`;
+}
 function capaHTML(o){
-  const L=temuanList(o);
-  const head=`<div class="card"><div class="small muted">Form Evaluasi CAPA</div><table class="t"><tbody><tr><td class="muted" style="width:38%">Nama Sarana</td><td>${esc(o.cover.sarana||o.cover.perusahaan)}</td></tr><tr><td class="muted">Alamat</td><td>${esc(o.cover.alamatPabrik)}</td></tr><tr><td class="muted">Tujuan Inspeksi</td><td>${esc(o.cover.tujuan)}</td></tr><tr><td class="muted">Tanggal Inspeksi</td><td>${esc(fmtDate(o.cover.tanggal))}</td></tr></tbody></table><p class="small muted" style="margin:8px 0 0">Data di atas diambil dari tab Sarana.</p></div>`;
-  if(!L.length)return `<h2 class="h2">Evaluasi CAPA</h2>${head}<div class="empty muted">Belum ada temuan untuk dievaluasi.</div>`;
-  return `<h2 class="h2">Evaluasi CAPA (${L.length} temuan)</h2>${head}`+L.map((it,i)=>{const a=o.a[it.no],s=a.s;
-   return `<div class="tm ${s}"><h3><span class="no">${i+1}</span><span class="pill p-${s.toLowerCase()}">${LABEL[s]}</span><span class="small muted">butir ${it.no}</span></h3>
-   <p style="margin:0 0 10px;overflow-wrap:anywhere">${esc(a.prob||autoProb(it,s))}</p>
-   <label class="f"><span>GAP Analysis</span><textarea data-no="${it.no}" data-f="gap">${esc(a.gap)}</textarea></label>
-   <label class="f"><span>CAPA (tindakan koreksi dan pencegahan)</span><textarea data-no="${it.no}" data-f="capa">${esc(a.capa)}</textarea></label>
-   <div class="grid2"><label class="f" style="margin:0"><span>Waktu penyelesaian</span><input type="text" data-no="${it.no}" data-f="due" value="${esc(a.due)}" placeholder="mis. 30 hari kerja"></label>
-   <label class="f" style="margin:0"><span>Hasil evaluasi</span><input type="text" data-no="${it.no}" data-f="evalr" value="${esc(a.evalr)}"></label></div></div>`;}).join("")
-   +`<button class="btn pri" style="width:100%" data-act="xlsx">Simpan Excel (.xlsx) dengan sheet CAPA</button>`;
+  ensureCapa(o);
+  const fin=!!o.final,dis=fin?"disabled":"",rows=capaRows(o),on=rows.filter(r=>r.on);
+  const idRows=[["Nama Sarana Produksi",o.cover.sarana||o.cover.perusahaan],["Alamat",o.cover.alamatPabrik],["Tujuan Inspeksi",o.cover.tujuan],["Tanggal Inspeksi",fmtDate(o.cover.tanggal)]];
+  const tr=rows.map((r,i)=>{
+    const x=r.k==="x",kv=x?`data-x="${r.id}"`:`data-no="${r.no}"`;
+    const tcell=`<textarea ${kv} data-f="${x?"t":"prob"}" ${dis}>${esc(r.t)}</textarea>`;
+    const kcell=x?`<select ${kv} data-f="cat" ${dis}>${["MN","MJ","KT"].map(c=>`<option value="${c}"${c===r.cat?" selected":""}>${LABEL[c]}</option>`).join("")}</select>`:`<span class="pill p-${r.cat.toLowerCase()}">${r.kl}</span>`;
+    return `<tr class="${r.on?"":"off"}"><td class="cn"><label class="chk"><input type="checkbox" data-act="capaOn" data-ref="${r.ref}" ${r.on?"checked":""} ${dis} aria-label="Sertakan temuan ${i+1} di CAPA"><b>${i+1}</b></label>${x&&!fin?`<button class="btn" style="min-height:34px;padding:2px 8px;margin-top:6px" data-act="xdel" data-id="${r.id}" aria-label="Hapus baris">Hapus</button>`:""}</td>
+    <td>${tcell}</td><td>${kcell}</td>
+    <td><textarea ${kv} data-f="gap" ${dis}>${esc(r.gap)}</textarea></td><td><textarea ${kv} data-f="capa" ${dis}>${esc(r.capa)}</textarea></td>
+    <td><textarea ${kv} data-f="due" style="min-height:64px" ${dis}>${esc(r.due)}</textarea></td><td><textarea ${kv} data-f="evalr" ${fin?"disabled":""}>${esc(r.ev)}</textarea></td></tr>`;}).join("");
+  const sigs=[o.sig.pj,...o.tim];const allSigned=o.sig.pj.img&&o.tim.length>0&&o.tim.every(t=>t.img);
+  const can=allSigned&&on.length>0&&!fin;
+  const log=(o.log||[]).slice(-8).reverse().map(l=>`<li>${esc(fmtDT(l.ts))}: ${esc(l.act)}</li>`).join("");
+  return `<h2 class="h2">Form Evaluasi CAPA Badan POM</h2>
+  ${fin?`<div class="note" style="border-style:solid;color:var(--ink)"><b style="color:var(--ok)">CAPA sudah final</b> sejak ${esc(fmtDT(o.final.ts))}. Isi tidak bisa diubah. Untuk mengubah, buka revisi.</div>`:""}
+  <div class="card"><table class="t"><tbody>${idRows.map(r=>`<tr><td class="muted" style="width:44%">${r[0]}</td><td>${esc(r[1])}</td></tr>`).join("")}</tbody></table><p class="small muted" style="margin:8px 0 0">Identitas diambil dari tab Sarana.</p></div>
+  <p class="small muted" style="margin:0 0 6px">Temuan dari checklist masuk otomatis. Hilangkan centang untuk tidak menyertakan satu temuan. Geser tabel ke samping untuk melihat semua kolom.</p>
+  <div class="scroll capa-wrap"><table class="t capa"><thead><tr><th>No.</th><th>Temuan</th><th>Klasifikasi Temuan</th><th>GAP Analysis</th><th>CAPA</th><th>Waktu Penyelesaian</th><th>Hasil Evaluasi</th></tr></thead><tbody>${tr||`<tr><td colspan="7" class="muted" style="padding:18px">Belum ada temuan di checklist.</td></tr>`}</tbody></table></div>
+  ${fin?"":`<div class="row" style="margin:10px 0 18px"><button class="btn" data-act="xadd">+ Tambah baris manual</button></div>`}
+  <h2 class="h2">Pengesahan</h2>
+  ${sigHTML(o,"sig.pj","Pimpinan/Penanggung Jawab",o.sig.pj,false)}
+  <div class="muted small" style="margin:6px 0">Tim Inspeksi</div>
+  ${o.tim.map((m,i)=>sigHTML(o,"tim."+i,"Tim Inspeksi "+(i+1),m,true)).join("")}
+  ${fin?"":`<div class="row" style="margin-bottom:14px"><button class="btn" data-act="timAdd">+ Tambah anggota tim</button></div>`}
+  <div class="card"><div class="row">
+   ${fin?(ui.confirmRev?`<button class="btn danger" data-act="revYes">Ya, buka revisi dan kosongkan tanda tangan</button><button class="btn" data-act="revNo">Batal</button>`:`<button class="btn danger" data-act="revAsk">Buat revisi</button>`):`<button class="btn pri" data-act="finalize" ${can?"":'aria-disabled="true" style="opacity:.55"'}>Finalisasi CAPA</button>`}
+   <button class="btn" data-act="docx">Unduh .docx</button><button class="btn" data-act="printCapa">Cetak / simpan PDF</button></div>
+   ${fin||can?"":`<p class="small muted" style="margin:8px 0 0">Finalisasi aktif setelah pimpinan dan semua anggota tim menandatangani, dan ada minimal satu temuan yang disertakan.</p>`}
+   <p class="small muted" style="margin:8px 0 0">Tanda tangan di sini berupa gambar (bukan tanda tangan elektronik tersertifikasi). Tombol cetak hanya bekerja di versi mandiri (alamat GitHub); di tampilan Claude gunakan .docx.</p></div>
+  ${log?`<div class="card"><b>Riwayat CAPA</b><ul class="small" style="margin:6px 0 0;padding-left:18px">${log}</ul></div>`:""}`;
+}
+/* ---- kanvas tanda tangan ---- */
+function initPads(){
+  document.querySelectorAll("canvas.pad").forEach(cv=>{
+    const r=cv.getBoundingClientRect(),dpr=window.devicePixelRatio||1;cv.width=Math.max(300,Math.floor(r.width*dpr));cv.height=Math.floor(180*dpr);
+    const g=cv.getContext("2d");g.scale(dpr,dpr);g.lineWidth=2.4;g.lineCap="round";g.lineJoin="round";g.strokeStyle="#111";g.fillStyle="#111";
+    let on=false,lx=0,ly=0;const pos=e=>{const b=cv.getBoundingClientRect();return[e.clientX-b.left,e.clientY-b.top];};
+    cv.addEventListener("pointerdown",e=>{e.preventDefault();try{cv.setPointerCapture(e.pointerId);}catch(x){}on=true;[lx,ly]=pos(e);cv.dataset.dirty="1";g.beginPath();g.arc(lx,ly,1.3,0,6.3);g.fill();});
+    cv.addEventListener("pointermove",e=>{if(!on)return;e.preventDefault();const[x,y]=pos(e);g.beginPath();g.moveTo(lx,ly);g.lineTo(x,y);g.stroke();lx=x;ly=y;});
+    const up=()=>{on=false;};cv.addEventListener("pointerup",up);cv.addEventListener("pointercancel",up);cv.addEventListener("pointerleave",up);
+  });
+}
+function normSig(cv){const W=600,H=200,c=document.createElement("canvas");c.width=W;c.height=H;const g=c.getContext("2d"),s=Math.min(W/cv.width,H/cv.height),w=cv.width*s,h=cv.height*s;g.drawImage(cv,(W-w)/2,(H-h)/2,w,h);return c.toDataURL("image/png");}
+/* ---- cetak PDF (versi mandiri) ---- */
+function printCapa(){
+  const o=cur();ensureCapa(o);
+  if(window.claude){toast("Cetak tidak tersedia di tampilan ini. Pakai versi mandiri atau unduh .docx.");return;}
+  const rows=capaRows(o).filter(r=>r.on);
+  const id=[["Nama Sarana Produksi",o.cover.sarana||o.cover.perusahaan],["Alamat",o.cover.alamatPabrik],["Tujuan Inspeksi",o.cover.tujuan],["Tanggal Inspeksi",fmtDate(o.cover.tanggal)]];
+  const sg=(s,t)=>`<div class="pp-sig"><div class="pp-lbl">${t}</div>${s.img?`<img src="${s.img}" alt="">`:`<div class="pp-blank"></div>`}<div><b>${esc(s.nama||"")}</b>${s.jabatan?`<br>${esc(s.jabatan)}`:""}${s.ts?`<br><small>Ditandatangani digital ${esc(fmtDT(s.ts))}</small>`:""}</div></div>`;
+  $("#printArea").innerHTML=`<h2 style="text-align:center;margin:0 0 10px;font:700 15px Arial,sans-serif">FORM EVALUASI CAPA BADAN POM</h2>
+   <table class="pp-id">${id.map(r=>`<tr><td style="width:150px">${r[0]}</td><td>:&nbsp;${esc(r[1])}</td></tr>`).join("")}</table>
+   <table class="pp-t"><thead><tr><th style="width:30px">No.</th><th>Temuan</th><th style="width:70px">Klasifikasi Temuan</th><th>GAP Analysis</th><th>CAPA</th><th style="width:90px">Waktu Penyelesaian</th><th>Hasil Evaluasi</th></tr></thead><tbody>
+   ${rows.map((r,i)=>`<tr><td>${i+1}</td><td>${esc(r.t)}</td><td>${esc(r.kl)}</td><td>${esc(r.gap)}</td><td>${esc(r.capa)}</td><td>${esc(r.due)}</td><td>${esc(r.ev)}</td></tr>`).join("")}</tbody></table>
+   <div class="pp-signs">${sg(o.sig.pj,"Pimpinan/Penanggung Jawab")}<div class="pp-tim"><div class="pp-lbl">Tim Inspeksi</div><div class="pp-timrow">${o.tim.map(m=>sg(m,"")).join("")}</div></div></div>`;
+  setTimeout(()=>window.print(),50);
 }
 function updateHeader(){
   const o=cur();if(!o||ui.view!=="insp")return;const c=calc(o);
   const r=$("#hdrRate");if(r){r.className="chip "+(c.rating?"r-"+c.rating:"r-none");r.textContent=c.rating?"Rating "+c.rating:"Belum dinilai";}
-  const sub=document.querySelector(".top .sub");if(sub)sub.textContent=fmtDate(o.cover.tanggal)+" · "+c.done+"/"+c.total+" butir terisi";
+  const sub=document.querySelector(".top .sub");if(sub)sub.textContent=fmtDate(o.cover.tanggal)+" · "+c.done+"/"+c.total+" butir terisi"+(o.shared&&teamOn()?" · "+teamStatus(o):"");
   const t=document.querySelector(".top h1");if(t)t.textContent=o.cover.sarana||o.cover.perusahaan||"Inspeksi tanpa nama";
 }
 
@@ -471,21 +572,53 @@ function fillP(doc,p,text,color){
   p.appendChild(r);
 }
 function stripIds(el){for(const n of [el,...el.getElementsByTagName("*")])for(const a of [...n.attributes])if(a.localName==="paraId"||a.localName==="textId")n.removeAttributeNode(a);}
+function drawingRun(rid,id,cx,cy){
+  const xml=`<w:r xmlns:w="${WNS}" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0"><wp:extent cx="${cx}" cy="${cy}"/><wp:docPr id="${id}" name="TTD ${id}"/><wp:cNvGraphicFramePr/><a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic><pic:nvPicPr><pic:cNvPr id="${id}" name="ttd${id}.png"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="${rid}"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${cx}" cy="${cy}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>`;
+  return new DOMParser().parseFromString(xml,"application/xml").documentElement;
+}
 async function doDocx(){
-  const o=cur();
+  const o=cur();ensureCapa(o);
   try{
-    const files=await unzip(b64ToU8(TPL.docx)),L=temuanList(o);
+    const files=await unzip(b64ToU8(TPL.docx)),R=capaRows(o).filter(r=>r.on);
     const doc=new DOMParser().parseFromString(td.decode(files["word/document.xml"]),"application/xml");
     const tbls=doc.getElementsByTagNameNS(WNS,"tbl"),kids=(e,n)=>[...e.children].filter(x=>x.localName===n);
     const para=tc=>tc.getElementsByTagNameNS(WNS,"p")[0];
+    [...tbls[0].getElementsByTagNameNS(WNS,"t")].forEach(t=>{if(t.textContent.trim()==="Peredaran")t.textContent="Produksi";});
     const hv=[o.cover.sarana||o.cover.perusahaan,o.cover.alamatPabrik,o.cover.tujuan,fmtDate(o.cover.tanggal)];
     kids(tbls[0],"tr").forEach((tr,i)=>fillP(doc,para(kids(tr,"tc")[2]),hv[i]));
     const main=tbls[1];let data=kids(main,"tr").slice(1);
-    while(data.length<L.length){const last=data[data.length-1],cl=last.cloneNode(true);stripIds(cl);last.after(cl);data.push(cl);
+    while(data.length<R.length){const last=data[data.length-1],cl=last.cloneNode(true);stripIds(cl);last.after(cl);data.push(cl);
       const tcell=kids(cl,"tc")[0].getElementsByTagNameNS(WNS,"t")[0];if(tcell)tcell.textContent=String(data.length);}
-    L.forEach((it,i)=>{const a=o.a[it.no],tc=kids(data[i],"tc");
-      [a.prob||autoProb(it,a.s),LABEL[a.s],a.gap,a.capa,a.due,a.evalr].forEach((v,j)=>fillP(doc,para(tc[j+1]),v,j===1?"FF0000":null));});
+    R.forEach((r,i)=>{const tc=kids(data[i],"tc");
+      [r.t,r.kl,r.gap,r.capa,r.due,r.ev].forEach((v,j)=>fillP(doc,para(tc[j+1]),v,j===1?"FF0000":null));});
+    /* pengesahan + tanda tangan */
+    const media=[];
+    const addImg=(p,dataUrl,cx,cy)=>{const n=media.length+1,rid="rIdTtd"+n;media.push({n,rid,bytes:b64ToU8(dataUrl.split(",")[1])});p.appendChild(doc.importNode(drawingRun(rid,1000+n,cx,cy),true));};
+    const nested=tbls[3];
+    if(nested){
+      const rows=kids(nested,"tr"),c=kids(rows[1],"tc"),ps=kids(c[0],"p"),pj=o.sig.pj;
+      if(pj.img&&ps[0])addImg(ps[0],pj.img,1500000,500000);
+      if(ps[3]&&pj.ts)fillP(doc,ps[3],"Ditandatangani digital "+fmtDT(pj.ts));
+      if(ps[4]&&pj.nama)fillP(doc,ps[4],pj.nama);
+      if(ps[5]&&pj.jabatan)fillP(doc,ps[5],pj.jabatan);
+      const tplP=ps[0],cell=c[4];
+      const newP=()=>{const p=doc.createElementNS(WNS,"w:p"),ppr=[...tplP.children].find(e=>e.localName==="pPr");if(ppr)p.appendChild(ppr.cloneNode(true));cell.appendChild(p);return p;};
+      o.tim.forEach((m,i)=>{
+        if(m.img)addImg(newP(),m.img,1500000,500000);else newP();
+        fillP(doc,newP(),(i+1)+". "+(m.nama||""));
+        if(m.ts)fillP(doc,newP(),"Ditandatangani digital "+fmtDT(m.ts));
+      });
+    }
     files["word/document.xml"]=te.encode(ser(doc));
+    if(media.length){
+      let ct=td.decode(files["[Content_Types].xml"]);
+      if(!/Extension="png"/.test(ct))ct=ct.replace("<Default Extension=\"jpg\"",'<Default Extension="png" ContentType="image/png"/><Default Extension="jpg"');
+      files["[Content_Types].xml"]=te.encode(ct);
+      let rels=td.decode(files["word/_rels/document.xml.rels"]);
+      rels=rels.replace("</Relationships>",media.map(m=>`<Relationship Id="${m.rid}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/ttd${m.n}.png"/>`).join("")+"</Relationships>");
+      files["word/_rels/document.xml.rels"]=te.encode(rels);
+      media.forEach(m=>{files["word/media/ttd"+m.n+".png"]=m.bytes;});
+    }
     await saveFile(fname(o,"docx").replace("CPPOB_","CAPA_"),zip(files));
   }catch(e){console.error(e);toast("Gagal membuat form CAPA: "+(e&&e.message||"coba lagi"));}
 }
@@ -531,9 +664,196 @@ async function initRemote(){
   }catch(e){}
 }
 
+/* ---------- mode tim: Google Sheets + Apps Script ---------- */
+const TM_KEY="cppob_team";
+let tm=null;
+try{const r=JSON.parse(localStorage.getItem(TM_KEY)||"null");if(r&&r.url&&r.code&&r.name)tm=r;}catch(e){}
+const teamOn=()=>!!tm&&!window.claude;
+const SY={}, DK=["s","prob","loc","ev","ref","gap","capa","due","evalr","capaOff","pe","re"], FLAGS=["capaOff","pe","re"];
+let RL=[], RLerr="", tmTimers={}, pendR=false;
+function sy(o){
+  if(!o.sync)o.sync={vers:{},shadow:{},by:{},since:0,metaTs:0,shadowMeta:null,sigSent:{},ready:true};
+  const T=SY[o.id]||(SY[o.id]={cf:{},sigMap:{},online:[],st:"",err:"",busy:false,pend:false});
+  return {S:o.sync,T};
+}
+function hsh(s){let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))|0;return s.length+":"+(h>>>0).toString(36);}
+function ansData(a){const d={};if(!a)return d;DK.forEach(k=>{const v=a[k];if(v===undefined||v===null||v===""||v===false)return;d[k]=FLAGS.includes(k)?true:String(v);});return d;}
+const ansKey=a=>JSON.stringify(ansData(a));
+const sigSlots=o=>{ensureCapa(o);return [["sig.pj",o.sig.pj],...o.tim.map((m,i)=>["tim."+i,m])];};
+function metaOf(o){
+  ensureCapa(o);
+  const sg=s=>{const x={nama:s.nama||"",jabatan:s.jabatan||"",ts:s.ts||0};const h=s.img?hsh(s.img):(s.ts?s.h:undefined);if(h)x.h=h;return x;};
+  return {cover:o.cover,umum:o.umum,khusus:o.khusus,capaExtra:o.capaExtra,tim:o.tim.map(sg),sig:{pj:sg(o.sig.pj)},final:o.final||null,rev:o.rev||0,log:(o.log||[]).slice(-40)};
+}
+function isDirty(o){
+  const {S,T}=sy(o);if(!S.ready)return false;
+  for(const it of ITEMS){if(T.cf[it.no])continue;if(ansKey(o.a[it.no])!==(S.shadow[it.no]===undefined?"{}":S.shadow[it.no]))return true;}
+  if(JSON.stringify(metaOf(o))!==S.shadowMeta)return true;
+  return sigSlots(o).some(([p,s])=>s.img&&S.sigSent[p]!==hsh(s.img)&&s.img.length<=48000);
+}
+async function tmCall(method,payload){
+  const ctl=new AbortController(),t=setTimeout(()=>ctl.abort(),25000);
+  try{
+    let res;
+    if(method==="GET")res=await fetch(tm.url+(tm.url.includes("?")?"&":"?")+new URLSearchParams(payload).toString(),{signal:ctl.signal});
+    else res=await fetch(tm.url,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload),signal:ctl.signal});
+    const txt=await res.text();let j;
+    try{j=JSON.parse(txt);}catch(e){throw new Error("server tidak membalas dengan benar; cek URL web app dan akses 'Anyone'");}
+    if(!j.ok)throw new Error(j.error||"server menolak");
+    return j;
+  }catch(e){if(e.name==="AbortError")throw new Error("waktu habis, sinyal lemah?");if(e instanceof TypeError)throw new Error("tidak bisa terhubung (offline atau URL salah)");throw e;}
+  finally{clearTimeout(t);}
+}
+async function tmPush(o){
+  const {S,T}=sy(o),sent={};
+  const answers=[];
+  ITEMS.forEach(it=>{if(T.cf[it.no])return;const k=ansKey(o.a[it.no]);if(k!==(S.shadow[it.no]===undefined?"{}":S.shadow[it.no])){sent[it.no]=k;answers.push({no:it.no,base:S.vers[it.no]||0,data:ansData(o.a[it.no])});}});
+  const mj=JSON.stringify(metaOf(o)),meta=mj!==S.shadowMeta;
+  const sigs=[],sh={};
+  sigSlots(o).forEach(([p,s])=>{if(s.img&&S.sigSent[p]!==hsh(s.img)&&s.img.length<=48000){sigs.push({path:p,nama:s.nama||"",img:s.img});sh[p]=hsh(s.img);}});
+  if(!answers.length&&!meta&&!sigs.length)return;
+  const body={action:"push",code:tm.code,insp:o.id,by:tm.name,answers,sigs,rekap:{header:recapHeader(),row:recapRow(o)}};
+  if(meta)body.meta=JSON.parse(mj);
+  const r=await tmCall("POST",body);
+  (r.results||[]).forEach(x=>{S.vers[x.no]=x.ver;S.shadow[x.no]=sent[x.no];S.by[x.no]={n:tm.name,ts:x.ts};});
+  (r.conflicts||[]).forEach(c=>{T.cf[c.no]=c.current;});
+  if(meta){S.shadowMeta=mj;if(r.metaTs)S.metaTs=r.metaTs;}
+  Object.assign(S.sigSent,sh);
+  saveLocal();
+}
+function applyMeta(o,m){
+  const {S,T}=sy(o),pool={};
+  sigSlots(o).forEach(([p,s])=>{if(s.img)pool[hsh(s.img)]=s.img;});
+  Object.values(T.sigMap).forEach(e=>{pool[e.h]=e.img;});
+  o.cover=m.cover||{};o.umum=m.umum||{};o.khusus=m.khusus||{};o.capaExtra=m.capaExtra||[];o.final=m.final||null;o.rev=m.rev||0;o.log=m.log||[];
+  o.sig={pj:Object.assign({},(m.sig||{}).pj)};o.tim=(m.tim||[]).map(x=>Object.assign({},x));
+  sigSlots(o).forEach(([p,s])=>{if(s.h&&pool[s.h])s.img=pool[s.h];});
+  S.shadowMeta=JSON.stringify(metaOf(o));
+}
+async function tmPull(o){
+  const {S,T}=sy(o);
+  const r=await tmCall("GET",{action:"pull",code:tm.code,insp:o.id,since:S.since,metaTs:S.metaTs,name:tm.name});
+  let changed=false;
+  (r.answers||[]).forEach(x=>{
+    S.since=Math.max(S.since,x.ts||0);
+    if(x.ver===S.vers[x.no])return;
+    const dirty=S.ready&&ansKey(o.a[x.no])!==(S.shadow[x.no]===undefined?"{}":S.shadow[x.no]);
+    if(dirty){if(T.cf[x.no])T.cf[x.no]={by:x.by,ver:x.ver,data:x.data};return;}
+    o.a[x.no]=Object.assign({},x.data);S.vers[x.no]=x.ver;S.shadow[x.no]=ansKey(o.a[x.no]);S.by[x.no]={n:x.by,ts:x.ts};delete T.cf[x.no];changed=true;
+  });
+  (r.sigs||[]).forEach(x=>{
+    S.since=Math.max(S.since,x.ts||0);
+    if(!x.img)return;const h=hsh(x.img);T.sigMap[x.path]={img:x.img,h};
+    sigSlots(o).forEach(([p,s])=>{if(p===x.path&&s.h===h&&!s.img){s.img=x.img;changed=true;}});
+  });
+  if(r.meta){
+    const dirtyMeta=S.ready&&JSON.stringify(metaOf(o))!==S.shadowMeta;
+    S.metaTs=r.metaTs||S.metaTs;
+    if(!dirtyMeta){applyMeta(o,r.meta);changed=true;}
+  }
+  T.online=(r.online||[]).filter(n=>n!==tm.name);
+  S.ready=true;
+  saveLocal();
+  return changed;
+}
+async function syncNow(id){
+  const o=store.list.find(x=>x.id===id);if(!o||!o.shared||!teamOn())return;
+  const {S,T}=sy(o);if(T.busy){T.pend=true;return;}
+  T.busy=true;let changed=false;
+  try{
+    if(S.ready)await tmPush(o);
+    changed=await tmPull(o);
+    T.st="ok";T.err="";T.okAt=Date.now();
+  }catch(e){T.st="err";T.err=String(e.message||e);}
+  finally{
+    T.busy=false;
+    if(changed&&ui.view==="insp"&&ui.id===id)safeRender();else updateHeader();
+    if(T.pend){T.pend=false;queueTeam(id,300);}
+  }
+}
+function queueTeam(id,ms){if(!teamOn())return;const o=store.list.find(x=>x.id===id);if(!o||!o.shared)return;clearTimeout(tmTimers[id]);tmTimers[id]=setTimeout(()=>syncNow(id),ms||1200);}
+function teamStatus(o){
+  if(!teamOn()||!o.shared)return "";
+  const {T}=sy(o),n=Object.keys(T.cf).length;
+  let s;
+  if(n)s=n+" butir bentrok, pilih di checklist";
+  else if(T.st==="err")s="Belum tersimpan ke server ("+T.err+"). Dicoba lagi otomatis";
+  else if(isDirty(o)||T.busy)s="Menyimpan ke server...";
+  else if(T.st==="ok")s="Tersimpan di server "+fmtDT(T.okAt).slice(-5);
+  else s="Menyambung ke server...";
+  if(T.online.length)s+=" · Online: "+T.online.join(", ");
+  return s;
+}
+function teamTag(o,no){
+  if(!o.shared||!teamOn())return"";
+  const {S,T}=sy(o),cf=T.cf[no];
+  if(cf){const w=esc(cf.by||"Petugas lain");return `<div class="hint MJ" role="alert"><b>${w}</b> mengubah butir ini bersamaan denganmu.<div class="row" style="margin-top:6px"><button class="btn" data-act="cfTheirs" data-no="${no}">Pakai punya ${w}</button><button class="btn pri" data-act="cfMine" data-no="${no}">Timpa dengan punyaku</button></div></div>`;}
+  const b=S.by[no];return b&&b.n&&b.n!==tm.name?`<div class="small muted" style="margin-top:6px">Diisi oleh ${esc(b.n)} · ${esc(fmtDT(b.ts))}</div>`:"";
+}
+function teamShareHTML(o){
+  if(window.claude||!tm)return"";
+  return o.shared?`<div class="note" style="border-style:solid">Inspeksi ini dibagikan ke tim. Petugas lain bisa membukanya dari beranda dan mengisi bersamaan.</div>`
+   :`<div class="card"><b>Kerja bersama tim</b><p class="small muted" style="margin:4px 0 8px">Unggah inspeksi ini ke spreadsheet tim supaya petugas lain bisa ikut mengisi.</p><button class="btn pri" data-act="tmShare">Bagikan ke tim</button></div>`;
+}
+function teamHomeHTML(){
+  if(window.claude)return `<p class="small muted" style="margin-top:14px">Mode tim (Google Sheets) hanya aktif di versi mandiri (alamat GitHub), tidak di tampilan Claude.</p>`;
+  const mine=new Set(store.list.map(x=>x.id)),rem=RL.filter(x=>!mine.has(x.id));
+  const list=tm?`<div class="row" style="margin:10px 0 6px;align-items:center;justify-content:space-between"><b>Inspeksi di server tim</b><button class="btn" data-act="tmList">Muat ulang</button></div>${RLerr?`<p class="small" style="color:var(--bad,#b3261e)">${esc(RLerr)}</p>`:""}${rem.length?rem.map(x=>`<div class="insp" style="cursor:default"><div style="flex:1"><div class="nm">${esc(x.sarana||x.perusahaan||"Tanpa nama")}</div><div class="small muted">${esc(fmtDate(x.tanggal))} · ${x.done}/${ITEMS.length} butir · ${x.temuan} temuan${x.by?" · terakhir oleh "+esc(x.by):""}</div></div><button class="btn pri" data-act="tmOpen" data-id="${x.id}">Buka</button></div>`).join(""):`<p class="small muted">Tidak ada inspeksi lain di server.</p>`}`:"";
+  return `<details class="card" style="margin-top:16px" ${tm?"":"open"}><summary style="font-family:var(--f-head);font-weight:700;cursor:pointer;min-height:32px;font-size:16px">Pengaturan tim ${tm?'<span class="pill p-ok">Aktif</span>':""}</summary>
+  <div style="margin-top:10px"><label class="f"><span>URL Web App (berakhiran /exec)</span><input id="tmUrl" type="url" value="${esc(tm?tm.url:"")}" placeholder="https://script.google.com/macros/s/.../exec"></label>
+  <label class="f"><span>Kode tim</span><input id="tmCode" type="text" value="${esc(tm?tm.code:"")}" autocapitalize="off" autocomplete="off"></label>
+  <label class="f"><span>Namamu (tampil ke petugas lain)</span><input id="tmName" type="text" value="${esc(tm?tm.name:"")}"></label>
+  <div class="row"><button class="btn pri" data-act="tmSave">Simpan dan tes</button>${tm?'<button class="btn" data-act="tmTest">Tes koneksi</button><button class="btn danger" data-act="tmClear">Hapus pengaturan</button>':""}</div>
+  <p class="small muted" id="tmMsg" role="status" style="margin:8px 0 0"></p></div></details>${list}`;
+}
+function tmMsg(t){const e=document.getElementById("tmMsg");if(e)e.textContent=t;}
+async function tmTest(){
+  tmMsg("Menghubungi server...");
+  try{const r=await tmCall("GET",{action:"ping",code:tm.code});tmMsg("Tersambung ke spreadsheet: "+(r.spreadsheet||"?"));tmLoadList();}catch(e){tmMsg("Gagal: "+(e.message||e));}
+}
+async function tmLoadList(){
+  if(!teamOn())return;
+  try{const r=await tmCall("GET",{action:"list",code:tm.code});RL=r.list||[];RLerr="";}catch(e){RLerr="Daftar server gagal dimuat: "+(e.message||e);}
+  if(ui.view==="home")safeRender();
+}
+function busyInput(){const a=document.activeElement;return (a&&/INPUT|TEXTAREA|SELECT/.test(a.tagName))||!!document.querySelector("canvas.pad[data-dirty]");}
+function safeRender(){if(busyInput()){pendR=true;return;}pendR=false;render();}
+document.addEventListener("focusout",()=>{if(pendR)setTimeout(()=>{if(pendR&&!busyInput())safeRender();},400);});
+function tmAct(act,b){
+  if(act==="tmSave"){
+    const u=(document.getElementById("tmUrl").value||"").trim(),c=(document.getElementById("tmCode").value||"").trim(),n=(document.getElementById("tmName").value||"").trim();
+    if(!/^https:\/\/script\.google\.com\/.+\/exec$/.test(u)){tmMsg("URL harus berawalan https://script.google.com/ dan berakhiran /exec");return true;}
+    if(!c||!n){tmMsg("Kode tim dan namamu wajib diisi");return true;}
+    tm={url:u,code:c,name:n};try{localStorage.setItem(TM_KEY,JSON.stringify(tm));}catch(e){}
+    tmTest();return true;
+  }
+  if(act==="tmTest"){tmTest();return true;}
+  if(act==="tmClear"){tm=null;RL=[];try{localStorage.removeItem(TM_KEY);}catch(e){}render();return true;}
+  if(act==="tmList"){tmLoadList();return true;}
+  if(act==="tmShare"){const o=cur();if(!o||!teamOn())return true;o.shared=true;o.sync=null;sy(o);o.sync.ready=true;saveLocal();render();toast("Mengunggah ke server tim...");syncNow(o.id);return true;}
+  if(act==="tmOpen"){
+    const x=RL.find(r=>r.id===b.dataset.id);if(!x)return true;
+    if(!store.list.find(o=>o.id===x.id)){const o={id:x.id,createdAt:Date.now(),updatedAt:Date.now(),cover:{},umum:{},khusus:{},a:{},shared:true};
+      o.sync={vers:{},shadow:{},by:{},since:0,metaTs:0,shadowMeta:null,sigSent:{},ready:false};store.list.unshift(o);saveLocal();}
+    ui.id=x.id;ui.view="insp";ui.tab="cek";ui.filter="all";render();window.scrollTo(0,0);syncNow(x.id);return true;
+  }
+  if(act==="cfTheirs"||act==="cfMine"){
+    const o=cur(),no=+b.dataset.no,{S,T}=sy(o),cf=T.cf[no];if(!cf)return true;
+    if(act==="cfTheirs"){o.a[no]=Object.assign({},cf.data);S.vers[no]=cf.ver;S.shadow[no]=ansKey(o.a[no]);S.by[no]={n:cf.by,ts:cf.ts};delete T.cf[no];saveLocal();render();}
+    else{S.vers[no]=cf.ver;delete T.cf[no];render();queueTeam(o.id,200);}
+    return true;
+  }
+  return false;
+}
+setInterval(()=>{
+  if(!teamOn())return;
+  if(ui.view==="insp"){const o=cur();if(o&&o.shared)syncNow(o.id);}
+  else if(!document.hidden&&(Date.now()%3===0||!RL.length))tmLoadList();
+},5000);
+
 /* ---------- events ---------- */
 document.addEventListener("click",e=>{
-  const b=e.target.closest("[data-act]");if(!b)return;const act=b.dataset.act;
+  const b=e.target.closest("[data-act]");if(!b)return;const act=b.dataset.act;if(tmAct(act,b))return;
   if(act==="new"||act==="sample"){const o=newInsp(act==="sample");ui.id=o.id;ui.view="insp";ui.tab=act==="sample"?"cek":"sarana";ui.open=new Set([0]);ui.filter="all";saveLocal();queueRemote(o.id);render();window.scrollTo(0,0);}
   else if(act==="open"){ui.id=b.dataset.id;ui.view="insp";ui.tab="cek";ui.filter="all";render();window.scrollTo(0,0);}
   else if(act==="home"){ui.view="home";ui.confirmDel=null;render();window.scrollTo(0,0);}
@@ -542,9 +862,26 @@ document.addEventListener("click",e=>{
   else if(act==="tab"){ui.tab=b.dataset.v;render();window.scrollTo(0,0);}
   else if(act==="filter"){ui.filter=b.dataset.v;render();}
   else if(act==="sec"){const i=+b.dataset.i;ui.open.has(i)?ui.open.delete(i):ui.open.add(i);render();}
-  else if(act==="status"){const o=cur(),no=+b.dataset.no,it=ITEMS.find(x=>x.no===no),a=getA(o,no),v=b.dataset.v;
+  else if(act==="status"){const o=cur();if(o.final){toast("CAPA sudah final. Buka revisi di tab CAPA untuk mengubah.");return;}const no=+b.dataset.no,it=ITEMS.find(x=>x.no===no),a=getA(o,no),v=b.dataset.v;
     if(a.s===v){a.s="";}else{a.s=v;if(["MN","MJ","KT"].includes(v)){if(!a.pe)a.prob=autoProb(it,v);if(!a.re)a.ref=autoRef(o,it);}}
     touch();render();}
+  else if(act==="capaOn"){const o=cur();if(o.final)return;const [k,v]=b.dataset.ref.split(":");if(k==="c"){getA(o,+v).capaOff=!b.checked;}else{const x=o.capaExtra.find(e=>e.id===v);if(x)x.on=b.checked;}touch();render();}
+  else if(act==="xadd"){const o=cur();ensureCapa(o);o.capaExtra.push({id:uid(),cat:"MN",on:true});touch();render();}
+  else if(act==="xdel"){const o=cur();o.capaExtra=o.capaExtra.filter(x=>x.id!==b.dataset.id);touch();render();}
+  else if(act==="timAdd"){const o=cur();ensureCapa(o);o.tim.push({nama:""});touch();render();}
+  else if(act==="timDel"){const o=cur();o.tim.splice(+b.dataset.p.split(".")[1],1);touch();render();}
+  else if(act==="padClear"){const cv=document.querySelector('canvas[data-pad="'+b.dataset.p+'"]');if(cv){cv.getContext("2d").clearRect(0,0,cv.width,cv.height);delete cv.dataset.dirty;}}
+  else if(act==="padSave"){const o=cur(),p=b.dataset.p,cv=document.querySelector('canvas[data-pad="'+p+'"]'),s=walk(o,p);
+    if(!cv||!cv.dataset.dirty){toast("Area tanda tangan masih kosong");}
+    else if(!s||!(s.nama||"").trim()){toast("Isi nama terang dulu");}
+    else{s.img=normSig(cv);s.ts=Date.now();addLog(o,"Tanda tangan disimpan: "+s.nama);touch();render();toast("Tanda tangan tersimpan");}}
+  else if(act==="sigReset"){const o=cur(),s=walk(o,b.dataset.p);if(s){addLog(o,"Tanda tangan dihapus: "+(s.nama||""));delete s.img;delete s.ts;touch();render();}}
+  else if(act==="finalize"){const o=cur();ensureCapa(o);const ok=o.sig.pj.img&&o.tim.length>0&&o.tim.every(m=>m.img)&&capaRows(o).some(r=>r.on);
+    if(!ok){toast("Lengkapi tanda tangan pimpinan dan semua anggota tim dulu");}else{o.final={ts:Date.now()};addLog(o,"CAPA difinalisasi");touch();render();window.scrollTo(0,0);}}
+  else if(act==="revAsk"){ui.confirmRev=true;render();}
+  else if(act==="revNo"){ui.confirmRev=false;render();}
+  else if(act==="revYes"){const o=cur();o.final=null;o.rev=(o.rev||0)+1;[o.sig.pj,...o.tim].forEach(s=>{delete s.img;delete s.ts;});addLog(o,"Revisi "+o.rev+" dibuka. Tanda tangan dikosongkan.");ui.confirmRev=false;touch();render();}
+  else if(act==="printCapa")printCapa();
   else if(act==="xlsx")doXlsx();
   else if(act==="docx")doDocx();
   else if(act==="csvAll")doCsvAll();
@@ -555,11 +892,15 @@ document.addEventListener("click",e=>{
 document.addEventListener("input",e=>{
   const el=e.target,o=cur();if(!o)return;
   if(el.dataset.p){setPath(o,el.dataset.p,el.value);touch();}
+  else if(el.dataset.x){const x=(o.capaExtra||[]).find(e=>e.id===el.dataset.x);if(x){x[el.dataset.f]=el.value;touch();}}
+  else if(el.dataset.sg){const parts=el.dataset.sg.split("."),key=parts.pop(),obj=walk(o,parts.join("."));if(obj){obj[key]=el.value;touch();}}
   else if(el.dataset.f){const a=getA(o,+el.dataset.no);a[el.dataset.f]=el.value;if(el.dataset.f==="prob")a.pe=1;if(el.dataset.f==="ref")a.re=1;touch();}
 });
 document.addEventListener("change",e=>{const el=e.target;if(el.tagName==="SELECT"&&el.dataset.p){const o=cur();setPath(o,el.dataset.p,el.value);touch();}});
 
 loadLocal();render();initRemote();
+if(teamOn()){store.list.filter(o=>o.shared).forEach((o,i)=>setTimeout(()=>syncNow(o.id),500+i*700));tmLoadList();}
+
 </script>
 
 </body></html>
